@@ -8,11 +8,11 @@ public class HungrySnakeApp extends PApplet {	// <----- 1. rename AppTemplate ev
     IWorld w;
     
     public void settings() {
-        this.size(400, 400);
+    	this.size(800, 600);
     }
     
     public void setup() {
-        //w = new WORLD(..........)   	<----- 2. create your initial world object
+    	w = new HungrySnakeWorld(new HungrySnake(400),new Watermelon(400));  // ,  new Watermelon(...)   );//w = new WORLD(..........)   	<----- 2. create your initial world object
     }
     
     public void draw() {
@@ -24,7 +24,7 @@ public class HungrySnakeApp extends PApplet {	// <----- 1. rename AppTemplate ev
     public void mousePressed(MouseEvent mev) {
         w = w.mousePressed(mev);
     }
-    
+      
     @Override
    public void mouseReleased(MouseEvent mev) {
     	w = w.mouseReleased(mev);

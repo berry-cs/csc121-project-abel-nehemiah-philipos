@@ -12,7 +12,8 @@ public class HungrySnakeApp extends PApplet {	// <----- 1. rename AppTemplate ev
     }
     
     public void setup() {
-    	w = new HungrySnakeWorld(new HungrySnake(400),new Watermelon(400));  // ,  new Watermelon(...)   );//w = new WORLD(..........)   	<----- 2. create your initial world object
+    	w = new HungrySnakeWorld(new HungrySnake(400),new ConsLOW(new Watermelon(400), new MTLOW()), 
+    			  100, 0);   // spawn counter    // ,  new Watermelon(...)   );//w = new WORLD(..........)   	<----- 2. create your initial world object
     }
     
     public void draw() {

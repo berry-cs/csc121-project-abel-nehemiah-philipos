@@ -53,8 +53,14 @@ public class HungrySnake  {
 	  */
 	    public PApplet draw(PApplet snake) {
 	    	snake.background(152,190,100);
+
+	    	snake.ellipseMode(PApplet.CENTER);
 	    	snake.fill(0, 255, 0);
 	    	snake.ellipse((int)this.x, (int)this.y, 30, 30);
+
+	    	//snake.fill(0);
+	        //snake.text(toString(), 10, 90);
+
 	        return snake;
 	    }
 	    
@@ -79,6 +85,15 @@ public class HungrySnake  {
 	    	this.x = mev.getX();  // Update snake's x position to follow mouse
 	        return this.update();
 	    }
+	    
+	    /**
+	     * Checks the collision of a sanke and wartermelon 
+	     */
+	    public boolean ateWatermelon(Watermelon w) {
+	        return Math.sqrt( Math.pow(this.x - w.x, 2) + Math.pow(this.y - w.y, 2) )  <= 22;
+	    }
+
 }
+
 
 

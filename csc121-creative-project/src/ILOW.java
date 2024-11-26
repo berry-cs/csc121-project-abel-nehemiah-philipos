@@ -1,101 +1,156 @@
-import processing.core.PApplet;
+import java.util.Objects;
 
-/** to represent a list of watermelons */
+import processing.core.PApplet;
+import processing.core.PConstants;
+
+/** Interface to represent a list of watermelons */
 public interface ILOW {
-    PApplet draw(PApplet w);
-    ILOW update();
-    // Adds a new watermelon to the list
-    ILOW addWatermelon(Watermelon wm);
-    // Removes watermelons that have fallen off the screen
-    ILOW removeOffScreen();
-    
-    // remove all the watermelons in this list that the snake has eaten..
-    // really: produce a copy of this list with only the watermelon that the
-    //     snake has *not* eaten
-    ILOW removeEaten(HungrySnake s);
-    
-    int countEaten(HungrySnake s);
+	PApplet draw(PApplet w);  // Render all watermelons in the list
+	ILOW update();            // Update all watermelons in the list
+	ILOW addWatermelon(Watermelon wm);  // Add a new watermelon to the list
+	ILOW removeOffScreen();   // Remove watermelons that have fallen off the screen
+	ILOW removeEaten(HungrySnake s);  // Remove watermelons eaten by the snake
+	int countEaten(HungrySnake s);    // Count how many watermelons have been eaten
+	int countOffScreen();    // Count how many watermelons are off the screen
 }
 
+/**
+ * Empty list of watermelons
+ */
 class MTLOW implements ILOW {
 
-    public PApplet draw(PApplet w) {
-        return w; 
-    }
+	public MTLOW() {
 
-    public ILOW update() {
-        return this; 
-    }
+	}
 
-    public ILOW addWatermelon(Watermelon wm) {
-        return new ConsLOW(wm, this); 
-    }
+	public PApplet draw(PApplet w) {
+		return w; // no watermelons
+	}
 
-    public ILOW removeOffScreen() {
-        return this; 
-    }
+	public ILOW update() {
+		return this; // no watermelons
+	}
+
+	public ILOW addWatermelon(Watermelon wm) {
+		return new ConsLOW(wm, this); // add watermelon to the list
+	}
+
+	public ILOW removeOffScreen() {
+		return this; // no watermelons
+	}
 
 	public ILOW removeEaten(HungrySnake s) {
-		return this;
+		return this; // no watermelons
 	}
 
 	public int countEaten(HungrySnake s) {
-		return 0;
+		return 0; // no watermelons
+	}
+
+	public int countOffScreen() {
+		return 0; // no watermelons
 	}
 }
 
+/**
+ * Non-empty list of watermelons
+ */
 class ConsLOW implements ILOW {
-    Watermelon first;
-    ILOW rest;
+	private Watermelon first;
+	private ILOW rest;
 
-    public ConsLOW(Watermelon first, ILOW rest) {
-        this.first = first;
-        this.rest = rest;
-    }
+	public ConsLOW(Watermelon first, ILOW rest) {
+		this.setFirst(first);
+		this.setRest(rest);
+	}
 
-    public PApplet draw(PApplet w) {
-        first.draw(w);
-        return rest.draw(w);
-    }
+	public PApplet draw(PApplet w) {
+		w.imageMode(PConstants.CENTER);
+		w.image(w.loadImage("WM1.png"), (float) this.first.getX() , (float) this.first.getY()); // draw the first watermelon
+		rest.draw(w); // recursively call it upom rest of the list
+		return w;
+	}
 
-    public ILOW update() {
-        return new ConsLOW(first.update(), rest.update());
-    }
+	public ILOW update() {
+		return new ConsLOW(getFirst().update(), getRest().update()); // update the first and call it upon the rest
+	}
 
-    public ILOW addWatermelon(Watermelon wm) {
-        return new ConsLOW(wm, this);
-    }
+	public ILOW addWatermelon(Watermelon wm) {
+		return new ConsLOW(wm, this); // add watermelon at the front of the list
+	}
 
-    public ILOW removeOffScreen() {
-        if (first.IsOffScreen()) {
-            return rest.removeOffScreen(); // Remove the first and keep checking the rest
-        }
-        else {return new ConsLOW(first, rest.removeOffScreen()); // Keep the first and check the rest
-        }
-    }
+	public ILOW removeOffScreen() {
+		if (getFirst().IsOffScreen()) {
+			return getRest().removeOffScreen(); // checks if the first should be remove 
+		}
+		else {return new ConsLOW(getFirst(), getRest().removeOffScreen()); // recursivaly check it upon rest
+		}
+	}
 
-    /**
-     * Remove eaten watermelons
-     */
-    public ILOW removeEaten(HungrySnake s) {
-    	if (s.ateWatermelon(first)) { // checks if first is eaten
-    		return rest.removeEaten(s);
-    	} else {
-    		return new ConsLOW(first, rest.removeEaten(s)); // Recurively call it 
-    	}    }
-    
-    /**
-     * Count the number of watermelons eaten by the snake
-     */
-    public int countEaten(HungrySnake s) {
-    	if (s.ateWatermelon(first)) { 
-    		return 1 + rest.countEaten(s); // checks if first is ate if true adds a point
-    	} else {
-    		return rest.countEaten(s); // recursivaly call it 
-    	}
-    }
-        
+	public ILOW removeEaten(HungrySnake s) {
+		if (s.ateWatermelon(getFirst())) { // checks if first is eaten
+			return getRest().removeEaten(s);
+		} else {
+			return new ConsLOW(getFirst(), getRest().removeEaten(s)); // recurively check it upon rest
+		}    }
+
+	public int countEaten(HungrySnake s) {
+		if (s.ateWatermelon(getFirst())) { 
+			return 1 + getRest().countEaten(s); // checks if first is ate if true adds a point
+		} else {
+			return getRest().countEaten(s); // recursivaly check it upon rest
+		}
+	}
+
+	public int countOffScreen() {
+		if (getFirst().IsOffScreen()) {
+			return 1 + getRest().countOffScreen(); // count this watermelon as off-screen
+		} else {
+			return getRest().countOffScreen(); // recursive check it upon rest
+		}
+	}
+
+	// Hashcodes, equals, tostring, and getters
+	@Override
+	public String toString() {
+		return "ConsLOW [first=" + first + ", rest=" + rest + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(first, rest);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConsLOW other = (ConsLOW) obj;
+		return Objects.equals(first, other.first) && Objects.equals(rest, other.rest);
+	}
+
+	public Watermelon getFirst() {
+		return first;
+	}
+
+	public void setFirst(Watermelon first) {
+		this.first = first;
+	}
+
+	public ILOW getRest() {
+		return rest;
+	}
+
+	public void setRest(ILOW rest) {
+		this.rest = rest;
+	}
 
 
 }
+	
+        
 

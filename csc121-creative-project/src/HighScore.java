@@ -1,68 +1,55 @@
-import java.io.*;
-import java.util.*;
+import java.util.Objects;
 
+/**
+ * Represents data of a player that conatins their name and score
+ * number of watermelons eaten before 1 was missed
+ */
 public class HighScore {
 
-    public static void main(String[] args) {
-        String filename = "highscores.txt";
-        List<Integer> highScores = new ArrayList<>();
+	private final String name;
+	private final int score;
 
-        /**
-         * Scan existing high scores from the file
-         */
-        try (Scanner fileScanner = new Scanner(new File(filename))) {
-            while (fileScanner.hasNextInt()) {
-                highScores.add(fileScanner.nextInt());
-            }
-        } catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+	public HighScore(String name, int score) {
+		this.name = name;
+		this.score = score;
+	}
 
-        /** 
-         * Sort scores from biggest to smallest
-         */
-        Collections.sort(highScores);
+	/**
+	 * Gets name
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-        /**
-         * Show the current high scores
-         */
-        System.out.println("Top 5 High Scores: " + highScores);
+	/**
+	 * Gets score
+	 * 
+	 */
+	public int getScore() {
+		return score;
+	}
 
-        /**
-         *  Get a new score from the user
-         */
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter your score: ");
-        int newScore = input.nextInt();
+	// Override toString(), hashCode(), and equals()
+	@Override
+	public String toString() {
+		return "HighScore [name=" + name + ", score=" + score + "]";
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, score);
+	}
 
-        /**
-         * Adds the new score but only keep the top 5
-         */
-        highScores.add(newScore);
-        Collections.sort(highScores);
-        
-        while (highScores.size() > 5) {
-            highScores.remove(highScores.size() - 1); // Remove the smallest score
-        }
-
-        /**
-         * Write the updated scores back to the file
-         */
-        try (PrintWriter pw = new PrintWriter(new File(filename))) {
-            for (int score : highScores) {
-                pw.println(score);
-            }
-        } catch (IOException e) {
-            System.out.println("Something went wrong: " + e);
-            e.printStackTrace();
-        }
-
-        /**
-         *  Shows the updated high scores
-         */
-        System.out.println("New High Scores: " + highScores);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HighScore other = (HighScore) obj;
+		return Objects.equals(name, other.name) && score == other.score;
+	}
 }
-
-

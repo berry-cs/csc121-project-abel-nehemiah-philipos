@@ -2,33 +2,37 @@ import java.util.Objects;
 
 import processing.core.PApplet;
 
+/**
+ * Represents an interactive watermelon that falls
+ * slowly from the top of the window. If the snake and
+ * watermelone collide it will be eaten
+ * if 1 fails to be eaten and hits the bottom of the screen game ends
+ */
 public class Watermelon {
+	
+	private static final double maxY = 600.00; // The bottom of the screen where the watermelon should stop
+	private static final double maxX = 800.00;  // Maximum X to contain watermelon
+	private static final double minX = 0.00;  // Minimum X to contain watermelon
+	private static final double InitalSpeed = 0.5;
+	private static final double SpeedIncrement = 0.05;
 
-	double x; // X position of the watermelon
-    double y; // Y position of the watermelon
-    double speed; // Speed at which the watermelon falls
-    double maxY; // The bottom of the screen where the watermelon should stop
-    double maxX;  // Maximum X to contain watermelon
-	double minX;  // Minimum X to contain watermelon
+	private double x; // X position of the watermelon
+	private double y; // Y position of the watermelon
+	private double speed; // Speed at which the watermelon falls
+    
 
     public Watermelon(double x) {
-        this.x = x;
-        this.y = 0; // Start at the top of the screen
-        this.speed = .5; // Initial falling speed
-        this.maxY = 600; 
-        this.minX = 0.00; // left edge of screen
-        this.maxX = 800.00; // right edge of screen
-
+        this.setX(x);
+        this.setY(0); // Start at the top of the screen
+        this.speed = InitalSpeed; // Initial falling speed
     }
 
-    public Watermelon(double x, double y, double speed, double maxY, double maxX, double minX) {
+    public Watermelon(double x, double y, double speed) {
 		super();
-		this.x = x;
-		this.y = y;
+		this.setX(x);
+		this.setY(y);
 		this.speed = speed;
-		this.maxY = maxY;
-		this.maxX = maxX;
-		this.minX = minX;
+
 	}
 
 	/**
@@ -37,12 +41,7 @@ public class Watermelon {
     public PApplet draw(PApplet w) {
     	w.fill(255, 0, 0);
     	w.ellipseMode(PApplet.CENTER);
-    	w.circle((int)this.x, (int)this.y, 15);
-    	
-    	
-    	//w.fill(0);
-    	//w.text(toString(), 10, 60);
-
+    	w.circle((int)this.getX(), (int)this.getY(), 15);
         return w;
     }
 
@@ -51,11 +50,11 @@ public class Watermelon {
      * The speed increases as it falls.
      */
     public Watermelon update() {
-        this.y += this.speed;
-        this.speed += 0.05; // Gradually increase speed over time
+        this.setY(this.getY() + this.speed);
+        this.speed += getSpeedincrement(); // Gradually increase speed over time
 
-        if (this.y > this.maxY) {
-            this.y = this.maxY; // Stop at the bottom of the screen
+        if (this.getY() > Watermelon.getMaxy()) {
+            this.setY(Watermelon.getMaxy()); // Stop at the bottom of the screen
         }
         return this;
     }
@@ -65,38 +64,60 @@ public class Watermelon {
      * if its y is greater than maxY
      * */
     public boolean IsOffScreen() {
-    	return this.y >= this.maxY;
+    	return this.getY() >= Watermelon.getMaxy();
     }
 
 
- 
+ // Override toString(), hashCode(), and equals()
     @Override
  	public String toString() {
- 		return "Watermelon [x=" + x + ", y=" + y + ", speed=" + (int)speed + ", maxY=" + maxY + ", maxX=" + maxX + ", minX="
+ 		return "Watermelon [x=" + getX() + ", y=" + getY() + ", speed=" + (int)speed + ", maxY=" + getMaxy() + ", maxX=" + maxX + ", minX="
  				+ minX + "]";
  	}
 
  	@Override
- 	public int hashCode() {
- 		return Objects.hash(maxX, maxY, minX, speed, x, y);
- 	}
+	public int hashCode() {
+		return Objects.hash(speed, x, y);
+	}
 
  	@Override
- 	public boolean equals(Object obj) {
- 		if (this == obj)
- 			return true;
- 		if (obj == null)
- 			return false;
- 		if (getClass() != obj.getClass())
- 			return false;
- 		Watermelon other = (Watermelon) obj;
- 		return Double.doubleToLongBits(maxX) == Double.doubleToLongBits(other.maxX)
- 				&& Double.doubleToLongBits(maxY) == Double.doubleToLongBits(other.maxY)
- 				&& Double.doubleToLongBits(minX) == Double.doubleToLongBits(other.minX)
- 				&& Double.doubleToLongBits(speed) == Double.doubleToLongBits(other.speed)
- 				&& Double.doubleToLongBits(x) == Double.doubleToLongBits(other.x)
- 				&& Double.doubleToLongBits(y) == Double.doubleToLongBits(other.y);
- 	}
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Watermelon other = (Watermelon) obj;
+		return Double.doubleToLongBits(speed) == Double.doubleToLongBits(other.speed)
+				&& Double.doubleToLongBits(x) == Double.doubleToLongBits(other.x)
+				&& Double.doubleToLongBits(y) == Double.doubleToLongBits(other.y);
+	}
+
+ 	// get and set methods
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public static double getMaxy() {
+		return maxY;
+	}
+
+	public static double getSpeedincrement() {
+		return SpeedIncrement;
+	}
 }
     
 
